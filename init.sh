@@ -1,6 +1,9 @@
 #!/bin/bash
 
-busybox syslogd -S -O /dev/fd/3 3>&1
+if [[ -n "$SYSLOG_ADDR" ]]; then
+	syslogd_args=( -R "$SYSLOG_ADDR" -L )
+fi
+busybox syslogd -S -O /dev/fd/3 "${syslogd_args[@]}" 3>&1
 
 function wait-pid {
 	while [[ -e /proc/$1/status ]]; do sleep 1; done
